@@ -8,13 +8,15 @@ app.use(limiter);
 
 const loginRoutes = require('./routes/loginRoutes');
 const updateRoutes = require('./routes/updateRoutes');
-const projectRoutes = require('./routes/admin/projectRoutes');
+const linkRoutes = require('./routes/admin/linkRoutes');
+const materialRoutes = require('./routes/admin/materialRoutes');
 
 app.use('/api/v1/login', loginRoutes);
 app.use('/api/v1/update', updateRoutes);
-app.use('/api/v1/project', projectRoutes);
+app.use('/api/v1/material', materialRoutes);
+app.use('/api/v1/link', linkRoutes);
 
-app.use((err, _, res, next) => {
+app.use((err, _, res) => {
     console.error(err.stack);
     res.status(500).send('Erro interno do servidor');
 });

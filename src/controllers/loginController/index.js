@@ -35,7 +35,7 @@ async function listAllUsers() {
     try {
         const users = await prisma.user.findMany();
 
-        if (users.length > 0) {
+        if (users.length) {
             return {
                 type: 'success',
                 message: 'Listagem de usuários bem-sucedida.',
@@ -62,6 +62,19 @@ async function createUser(data) {
                 type: 'error',
                 message: passwordValidation.error,
                 suggestion: passwordValidation.suggestion,
+            };
+        }
+
+        const existingUser = await prisma.user.findUnique({
+            where: {
+                email: data.email,
+            },
+        });
+
+        if (existingUser) {
+            return {
+                type: 'error',
+                message: 'O e-mail já está em uso. Por favor, use outro e-mail.',
             };
         }
 
