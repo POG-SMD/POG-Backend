@@ -1,6 +1,6 @@
 const yup = require('yup');
 
-async function validateUserPassword(password) {
+async function validatePassword(password) {
     const schema = yup.object().shape({
         password: yup
             .string()

@@ -1,8 +1,8 @@
-require('express');
+const express = require('express');
 const { updateUserController } = require('../../controllers/updateController');
-require('../auth/middlewares/authenticateJWT');
+const authenticateJWT = require('../../auth/middlewares/authenticateJWT');
 
-express.Router();
+const router = express.Router();
 
 router.put('/', authenticateJWT, async (req, res) => {
     try {

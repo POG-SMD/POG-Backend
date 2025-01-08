@@ -1,5 +1,5 @@
 {
-  "name": "template-backend",
+  "name": "eollab-blog",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,9 +7,10 @@
     "node": "20.x"
   },
   "scripts": {
-    "start:dev": "SET NODE_ENV=development && nodemon --exec ts-node src/index.ts",
-    "start:prod": "SET NODE_ENV=production && tsc && node dist/index.js",
-    "build": "tsc"
+    "start:dev": "SET NODE_ENV=development && nodemon index.js",
+    "start:prod": "SET NODE_ENV=production && node index.js",
+    "test": "jest",
+    "watch:test": "jest --watchAll"
   },
   "author": "",
   "license": "ISC",
@@ -24,13 +25,9 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "nodemon": "^3.1.4",
     "prisma": "^5.10.2",
-    "typescript": "^5.2.2",
-    "@types/node": "^20.4.1",
-    "@types/express": "^4.17.17",
-    "@types/jsonwebtoken": "^9.0.2",
-    "@types/cors": "^2.8.12",
-    "ts-node": "^10.9.1"
-}
+    "supertest": "^7.0.0"
+  }
 }

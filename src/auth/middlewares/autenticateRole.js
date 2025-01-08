@@ -1,11 +1,11 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-async function authenticateRole(userEmail) {
+async function authenticateRole(userAdmEmail) {
     try {
         const user = await prisma.user.findUnique({
             where: {
-                email: userEmail
+                email: userAdmEmail
             }
         });
 

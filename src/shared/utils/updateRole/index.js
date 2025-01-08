@@ -1,7 +1,7 @@
-require('@prisma/client');
-new PrismaClient();
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-async function updateUserRoleByEmail(userEmail, newRole) {
+async function updateUserRole(userEmail, newRole) {
     try {
         const validRoles = ["USER", "ADM"];
         
@@ -45,4 +45,4 @@ async function updateUserRoleByEmail(userEmail, newRole) {
     }
 }
 
-module.exports = updateUserRoleByEmail;
+module.exports = updateUserRole;

@@ -1,19 +1,19 @@
-require('../auth/middlewares/autenticateRole');
-require('../../shared/utils/updateRole');
+const authenticateRole = require('../../auth/middlewares/autenticateRole'); // Corrija o caminho se necessário
+const updateUserRole = require('../../shared/utils/updateRole');
 
-async function updateUserControllerByData(data) {
+async function updateUserController(data) {
 
-    if (!data.userEmail || !data.newRole) {
+    if (!data.userAdmEmail || !data.newRole || !data.userEmail) {
         return {
             type: 'error',
-            message: 'userEmail e newRole são obrigatórios',
+            message: 'userAdmEmail, userEmail e newRole são obrigatórios',
         };
     }
 
     try {
-        const isADM = await authenticateRole(data.userEmail);
-        if (!isADM) {
-            const updateUser = await updateUserRoleByEmail(data.userEmail, data.newRole);
+        const isADM = await authenticateRole(data.userAdmEmail);
+        if (isADM) {
+            const updateUser = await updateUserRole(data.userEmail, data.newRole);
 
             if (updateUser.type === 'success') {
                 return {
@@ -32,6 +32,7 @@ async function updateUserControllerByData(data) {
             return {
                 type: 'error',
                 message: 'Usuário não possui role de ADM.',
+                data: data.admEmail
             };
         }
         

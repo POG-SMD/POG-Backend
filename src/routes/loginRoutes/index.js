@@ -1,6 +1,6 @@
 const express = require('express');
-require('../controllers/loginController');
-require('../auth/middlewares/authenticateJWT');
+const { createUser, deleteUser, listAllUsers, listUser, loginUser } = require('../../controllers/loginController');
+const authenticateJWT = require('../../auth/middlewares/authenticateJWT');
 
 const router = express.Router();
 
