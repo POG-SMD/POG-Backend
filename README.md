@@ -1,8 +1,8 @@
-# Backend - Eollab Blog
+# Backend - POG
 
 ## 📋 Sobre o Projeto
 
-Este é o backend do Eollab Blog. Ele utiliza Node.js, Express e Prisma para gerenciar APIs RESTful, autenticação JWT e operações de banco de dados PostgreSQL. O projeto inclui documentação automática com Swagger e validações robustas com Yup.
+Este é o backend dos POG. Ele utiliza Node.js, Express e Prisma para gerenciar APIs RESTful, autenticação JWT e operações de banco de dados PostgreSQL. O projeto inclui documentação automática com Swagger e validações robustas com Yup.
 
 ---
 
