@@ -9,13 +9,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
 
 const loginRoutes = require("./routes/loginRoutes");
-
 const updateRoutes = require("./routes/updateRoutes");
-
 const linkRoutes = require("./routes/admin/linkRoutes");
-
 const materialRoutes = require("./routes/admin/materialRoutes");
-
 const reservationRoutes = require("./routes/admin/reservationRoutes");
 
 app.use("/api/v1/login", loginRoutes);
@@ -24,6 +20,7 @@ app.use("/api/v1/material", materialRoutes);
 app.use("/api/v1/link", linkRoutes);
 app.use("/api/v1/reservation", reservationRoutes);
 
+app.set('trust proxy', true);
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Erro interno do servidor");
