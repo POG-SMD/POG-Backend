@@ -1,12 +1,16 @@
 const express = require("express");
+const cors = require("cors"); 
 const app = express();
-const limiter = require("./shared/middlewares/rateLimit");
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
+app.use(cors({
+  origin: "*",
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(limiter);
 
 const loginRoutes = require("./routes/loginRoutes");
 const updateRoutes = require("./routes/updateRoutes");

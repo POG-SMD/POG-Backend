@@ -216,6 +216,7 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+
         const result = await loginUser(email, password);
 
         if (result.type === 'success') {
