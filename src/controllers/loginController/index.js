@@ -85,6 +85,7 @@ async function createUser(data) {
                 email: data.email,
                 password: hashedPassword,
                 name: data.name,
+                role: data.role
             },
         });
 
