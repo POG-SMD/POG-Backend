@@ -94,6 +94,8 @@ async function createMaterial(data) {
         type: data.type,
         title: data.title,
         description: data.description,
+        disponible: data.disponible,
+        quantity: data.quantity
       },
     });
 

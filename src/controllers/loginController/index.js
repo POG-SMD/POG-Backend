@@ -17,7 +17,14 @@ async function listUser(id) {
             return {
                 type: 'success',
                 message: 'Listagem de usuário bem-sucedida.',
-                data: user,
+                data: {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    role: user.role,
+                    createdAt: user.createdAt,
+                    updatedAt: user.updatedAt
+                },
             };
         } else {
             return {
