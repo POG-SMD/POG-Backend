@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { statusType } = require("../../enum/statusType");
 
 const prisma = new PrismaClient();
 
@@ -73,7 +74,7 @@ const createReservation = async (data) => {
         dateEnd: data.dateEnd,
         purpose: data.purpose,
         type: data.type,
-        status: 1,
+        status: statusType.PENDENTE,
       },
     });
 
@@ -93,7 +94,7 @@ const createReservation = async (data) => {
   }
 };
 
-async function updateReservation(id, data) {
+async function acceptReservation(id, data) {
   try {
     const existingReservation = await prisma.reservation.findUnique({
       where: { id }
@@ -110,20 +111,167 @@ async function updateReservation(id, data) {
         dateEnd: data.dateEnd ? new Date(data.dateEnd) : existingReservation.dateEnd,
         status: data.status || existingReservation.status,
         purpose: data.purpose || existingReservation.purpose,
-        type: data.type || existingReservation.type
+        type: statusType.EM_RESERVA
       }
     });
 
     return {
       type: "success",
-      message: "Reserva editada com sucesso.",
+      message: "Reserva aceita com sucesso.",
       data: updatedReservation,
     };
   } catch (error) {
-    console.error("Erro ao editar reserva:", error);
+    console.error("Erro ao aceitar reserva:", error);
     return {
       type: "error",
-      message: "Erro ao editar a reserva.",
+      message: "Erro ao aceitar a reserva.",
+      error: error.message,
+    };
+  }
+}
+
+async function refuseReservation(id, data) {
+  try {
+    const existingReservation = await prisma.reservation.findUnique({
+      where: { id }
+    });
+
+    if (!existingReservation) {
+      return { type: "error", message: "Reserva não encontrada para edição." };
+    }
+
+    const material = await prisma.material.findUnique({
+      where: { id: data.materialId },
+    });
+
+    if (!material) {
+      return { type: "error", message: "Material não encontrado." };
+    }
+
+    await prisma.material.update({
+      where: { id: data.materialId },
+      data: { quantity: material.quantity + 1 },
+    });
+
+    const updatedReservation = await prisma.reservation.update({
+      where: { id },
+      data: {
+        dateStart: data.dateStart ? new Date(data.dateStart) : existingReservation.dateStart,
+        dateEnd: data.dateEnd ? new Date(data.dateEnd) : existingReservation.dateEnd,
+        status: data.status || existingReservation.status,
+        purpose: data.purpose || existingReservation.purpose,
+        type: statusType.RECUSADO
+      }
+    });
+
+    return {
+      type: "success",
+      message: "Reserva recusada com sucesso.",
+      data: updatedReservation,
+    };
+  } catch (error) {
+    console.error("Erro ao recusar reserva:", error);
+    return {
+      type: "error",
+      message: "Erro ao recusar a reserva.",
+      error: error.message,
+    };
+  }
+}
+
+async function returnReservation(id, data) {
+  try {
+    const existingReservation = await prisma.reservation.findUnique({
+      where: { id }
+    });
+
+    if (!existingReservation) {
+      return { type: "error", message: "Reserva não encontrada para edição." };
+    }
+
+    const material = await prisma.material.findUnique({
+      where: { id: data.materialId },
+    });
+
+    if (!material) {
+      return { type: "error", message: "Material não encontrado." };
+    }
+
+    await prisma.material.update({
+      where: { id: data.materialId },
+      data: { quantity: material.quantity + 1 },
+    });
+
+    const updatedReservation = await prisma.reservation.update({
+      where: { id },
+      data: {
+        dateStart: data.dateStart ? new Date(data.dateStart) : existingReservation.dateStart,
+        dateEnd: data.dateEnd ? new Date(data.dateEnd) : existingReservation.dateEnd,
+        status: data.status || existingReservation.status,
+        purpose: data.purpose || existingReservation.purpose,
+        type: statusType.FINALIZADO
+      }
+    });
+
+    return {
+      type: "success",
+      message: "Reserva retornada com sucesso.",
+      data: updatedReservation,
+    };
+  } catch (error) {
+    console.error("Erro ao retornada reserva:", error);
+    return {
+      type: "error",
+      message: "Erro ao retornada a reserva.",
+      error: error.message,
+    };
+  }
+}
+
+async function cancelReservation(id, data) {
+  try {
+    const existingReservation = await prisma.reservation.findUnique({
+      where: { id }
+    });
+
+    if (!existingReservation) {
+      return { type: "error", message: "Reserva não encontrada para edição." };
+    }
+
+    const material = await prisma.material.findUnique({
+      where: { id: data.materialId },
+    });
+
+    if (!material) {
+      return { type: "error", message: "Material não encontrado." };
+    }
+
+    await prisma.material.update({
+      where: { id: data.materialId },
+      data: { quantity: material.quantity + 1 },
+    });
+
+    const updatedReservation = await prisma.reservation.update({
+      where: { id },
+      data: {
+        dateStart: data.dateStart ? new Date(data.dateStart) : existingReservation.dateStart,
+        dateEnd: data.dateEnd ? new Date(data.dateEnd) : existingReservation.dateEnd,
+        status: data.status || existingReservation.status,
+        purpose: data.purpose || existingReservation.purpose,
+        type: statusType.CANCELADO
+      }
+    });
+
+    return {
+      type: "success",
+      message: "Reserva cancelada com sucesso.",
+      data: updatedReservation,
+    };
+  } catch (error) {
+    console.error("Erro ao cancelada reserva:", error);
+    return {
+      type: "error",
+      message: "Erro ao cancelada a reserva.",
       error: error.message,
     };
   }
@@ -168,6 +316,9 @@ module.exports = {
   listReservation,
   listAllReservations,
   createReservation,
-  updateReservation,
+  acceptReservation,
+  refuseReservation,
+  returnReservation,
+  cancelReservation,
   deleteReservation,
 };

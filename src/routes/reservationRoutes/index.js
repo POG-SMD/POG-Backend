@@ -3,8 +3,11 @@ const {
   listAllReservations,
   listReservation,
   createReservation,
-  updateReservation,
   deleteReservation,
+  acceptReservation,
+  refuseReservation,
+  returnReservation,
+  cancelReservation,
 } = require("../../controllers/reservationController");
 const authenticateJWT = require("../../auth/middlewares/authenticateJWT");
 
@@ -115,9 +118,9 @@ router.post("/create", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/admin/reservations/{id}:
+ * /api/v1/admin/reservations/accept/{id}:
  *   put:
- *     summary: Atualiza uma reserva pelo ID
+ *     summary: Aceita uma reserva pelo ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -143,12 +146,132 @@ router.post("/create", authenticateJWT, async (req, res) => {
  *       500:
  *         description: Erro interno do servidor
  */
-router.put("/:id", authenticateJWT, async (req, res) => {
+router.put("/accept/:id", authenticateJWT, async (req, res) => {
   try {
-    const result = await updateReservation(Number(req.params.id), req.body);
+    const result = await acceptReservation(Number(req.params.id), req.body);
     return res.status(result.type === "success" ? 200 : 400).json(result);
   } catch (error) {
-    console.error("Erro ao editar reserva:", error);
+    console.error("Erro ao aceitar reserva:", error);
+    return res.status(500).json({ error: "Erro interno do servidor" });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/admin/reservations/return/{id}:
+ *   put:
+ *     summary: Aceita uma reserva pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: integer
+ *               purpose:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Reserva atualizada com sucesso
+ *       400:
+ *         description: Reserva não encontrada
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.put("/return/:id", authenticateJWT, async (req, res) => {
+  try {
+    const result = await returnReservation(Number(req.params.id), req.body);
+    return res.status(result.type === "success" ? 200 : 400).json(result);
+  } catch (error) {
+    console.error("Erro ao retornar reserva:", error);
+    return res.status(500).json({ error: "Erro interno do servidor" });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/admin/reservations/cancel/{id}:
+ *   put:
+ *     summary: Aceita uma reserva pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: integer
+ *               purpose:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Reserva atualizada com sucesso
+ *       400:
+ *         description: Reserva não encontrada
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.put("/cancel/:id", authenticateJWT, async (req, res) => {
+  try {
+    const result = await cancelReservation(Number(req.params.id), req.body);
+    return res.status(result.type === "success" ? 200 : 400).json(result);
+  } catch (error) {
+    console.error("Erro ao cancelar reserva:", error);
+    return res.status(500).json({ error: "Erro interno do servidor" });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/admin/reservations/refuse/{id}:
+ *   put:
+ *     summary: Recusa uma reserva pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: integer
+ *               purpose:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Reserva atualizada com sucesso
+ *       400:
+ *         description: Reserva não encontrada
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.put("/refuse/:id", authenticateJWT, async (req, res) => {
+  try {
+    const result = await refuseReservation(Number(req.params.id), req.body);
+    return res.status(result.type === "success" ? 200 : 400).json(result);
+  } catch (error) {
+    console.error("Erro ao recusar reserva:", error);
     return res.status(500).json({ error: "Erro interno do servidor" });
   }
 });
