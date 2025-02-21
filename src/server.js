@@ -16,7 +16,7 @@ const loginRoutes = require("./routes/loginRoutes");
 const updateRoutes = require("./routes/updateRoutes");
 const linkRoutes = require("./routes/admin/linkRoutes");
 const materialRoutes = require("./routes/admin/materialRoutes");
-const reservationRoutes = require("./routes/admin/reservationRoutes");
+const reservationRoutes = require("./routes/reservationRoutes");
 
 app.use("/api/v1/login", loginRoutes);
 app.use("/api/v1/update", updateRoutes);

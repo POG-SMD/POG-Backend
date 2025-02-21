@@ -8,24 +8,28 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String    @db.VarChar(255)
-  name      String    @db.VarChar(255)
-  role      String    @default("USER")
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         Int           @id @default(autoincrement())
+  email      String        @unique
+  password   String        @db.VarChar(255)
+  name       String        @db.VarChar(255)
+  role       String        @default("USER")
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  reservations Reservation[]
 }
 
 model Material {
-  id          Int       @id @default(autoincrement())
-  type        Int       @db.Integer
-  title       String    @db.VarChar(255)
-  createdAt   DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime  @updatedAt @db.Timestamp(6)
-  description String    @db.Text
-  disponible  Boolean   @default(false) @db.Boolean  
-  quantity    Int       @default(0) @db.Integer      
+  id          Int          @id @default(autoincrement())
+  type        Int          @db.Integer
+  title       String       @db.VarChar(255)
+  createdAt   DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime     @updatedAt @db.Timestamp(6)
+  description String       @db.Text
+  disponible  Boolean      @default(false) @db.Boolean  
+  quantity    Int          @default(0) @db.Integer      
+
+  reservations Reservation[]
 }
 
 
@@ -38,12 +42,18 @@ model Link {
   updatedAt   DateTime  @updatedAt @db.Timestamp(6)
 }
 
-// Falta melhorar
 model Reservation {
   id          Int       @id @default(autoincrement())
   createdAt   DateTime  @default(now()) @db.Timestamp(6)
   updatedAt   DateTime  @updatedAt @db.Timestamp(6)
-  type        Int       @db.Integer
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  materialId  Int?      
+  material    Material? @relation(fields: [materialId], references: [id], onDelete: SetNull)
+  dateStart   DateTime  
+  dateEnd     DateTime  
+  status      Int?  @default(1)
+  type        Int  
   purpose     String    @db.Text
 }
 
