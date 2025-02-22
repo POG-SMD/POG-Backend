@@ -32,7 +32,6 @@ model Material {
   reservations Reservation[]
 }
 
-
 model Link {
   id          Int       @id @default(autoincrement())
   title       String    @db.VarChar(255)
@@ -52,6 +51,8 @@ model Reservation {
   material    Material? @relation(fields: [materialId], references: [id], onDelete: SetNull)
   dateStart   DateTime  
   dateEnd     DateTime  
+  startTime   String
+  endTime     String
   status      Int?  @default(1)
   type        Int  
   purpose     String    @db.Text

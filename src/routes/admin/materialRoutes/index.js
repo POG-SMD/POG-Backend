@@ -5,6 +5,7 @@ const {
   createMaterial,
   listMaterial,
   listAllMaterial,
+  listMateriaOptions,
 } = require("../../../controllers/admin/materialController");
 const authenticateJWT = require("../../../auth/middlewares/authenticateJWT");
 
@@ -43,6 +44,47 @@ const router = express.Router();
 router.get("/all", authenticateJWT, async (req, res) => {
   try {
     const result = await listAllMaterial();
+    if (result.type === "success") return res.status(200).send(result);
+    return res.status(400).send(result);
+  } catch (error) {
+    console.error("Erro ao listar materiais:", error);
+    return res.status(500).send({ error: "Erro interno do servidor" });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/admin/materials/options:
+ *   get:
+ *     summary: Lista todos os materiais em modelo de options
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de materiais retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   title:
+ *                     type: string
+ *                   type:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ *       401:
+ *         description: Token não fornecido ou inválido
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.get("/options", authenticateJWT, async (req, res) => {
+  try {
+    const result = await listMateriaOptions();
     if (result.type === "success") return res.status(200).send(result);
     return res.status(400).send(result);
   } catch (error) {

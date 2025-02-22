@@ -86,6 +86,8 @@ const createReservation = async (data) => {
         materialId: data.materialId,
         dateStart: data.dateStart,
         dateEnd: data.dateEnd,
+        startTime: data.startTime,
+        endTime: data.endTime,
         purpose: data.purpose,
         type: data.type,
         status: statusType.PENDENTE,
@@ -162,7 +164,6 @@ async function refuseReservation(id, data) {
       where: { id: data.materialId },
       data: { quantity: material.quantity + 1 },
     });
-    console.log("Status que será definido:", statusType.RECUSADO);
 
     const updatedReservation = await prisma.reservation.update({
       where: { id },

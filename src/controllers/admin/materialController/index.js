@@ -28,6 +28,31 @@ async function listMaterial(id) {
   }
 }
 
+async function listMateriaOptions() {
+  try {
+    const materials = await prisma.material.findMany();
+
+    if (materials.length) {
+      return {
+        type: "success",
+        message: "Listagem de opções para materiais bem-sucedida.",
+        data: materials.map(material => ({
+          label: material.title,
+          value: material.id.toString(),
+        })),
+      };
+    } else {
+      return {
+        type: "error",
+        message: "Listagem de opções para materiais não existente.",
+      };
+    }
+  } catch (error) {
+    console.error("Erro ao listar opções para materiais:", error);
+    throw error;
+  }
+}
+
 async function listAllMaterial() {
   try {
     const material = await prisma.material.findMany();
@@ -147,4 +172,5 @@ module.exports = {
   deleteMaterial,
   createMaterial,
   updateMaterial,
+  listMateriaOptions
 };
