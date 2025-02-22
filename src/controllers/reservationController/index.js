@@ -7,7 +7,7 @@ async function listReservation(id) {
   try {
     const reservation = await prisma.reservation.findUnique({
       where: { id },
-      include: { user: true, material: true }
+      include: { user: true, material: true },
     });
 
     if (reservation) {
@@ -31,7 +31,7 @@ async function listReservation(id) {
 async function listAllReservations() {
   try {
     const reservations = await prisma.reservation.findMany({
-      include: { user: true, material: true }
+      include: { user: true, material: true },
     });
 
     if (reservations.length) {
@@ -54,6 +54,20 @@ async function listAllReservations() {
 
 const createReservation = async (data) => {
   try {
+    const existingReservation = await prisma.reservation.findFirst({
+      where: {
+        userId: data.userId,
+        status: { in: [statusType.PENDENTE, statusType.EM_RESERVA] },
+      },
+    });
+
+    if (existingReservation) {
+      return {
+        type: "error",
+        message: "Usuário já possui uma reserva ativa ou pendente.",
+      };
+    }
+
     const material = await prisma.material.findUnique({
       where: { id: data.materialId },
     });
@@ -97,7 +111,7 @@ const createReservation = async (data) => {
 async function acceptReservation(id, data) {
   try {
     const existingReservation = await prisma.reservation.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!existingReservation) {
@@ -107,12 +121,8 @@ async function acceptReservation(id, data) {
     const updatedReservation = await prisma.reservation.update({
       where: { id },
       data: {
-        dateStart: data.dateStart ? new Date(data.dateStart) : existingReservation.dateStart,
-        dateEnd: data.dateEnd ? new Date(data.dateEnd) : existingReservation.dateEnd,
-        status: data.status || existingReservation.status,
-        purpose: data.purpose || existingReservation.purpose,
-        type: statusType.EM_RESERVA
-      }
+        status: statusType.EM_RESERVA,
+      },
     });
 
     return {
@@ -133,7 +143,7 @@ async function acceptReservation(id, data) {
 async function refuseReservation(id, data) {
   try {
     const existingReservation = await prisma.reservation.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!existingReservation) {
@@ -152,16 +162,13 @@ async function refuseReservation(id, data) {
       where: { id: data.materialId },
       data: { quantity: material.quantity + 1 },
     });
+    console.log("Status que será definido:", statusType.RECUSADO);
 
     const updatedReservation = await prisma.reservation.update({
       where: { id },
       data: {
-        dateStart: data.dateStart ? new Date(data.dateStart) : existingReservation.dateStart,
-        dateEnd: data.dateEnd ? new Date(data.dateEnd) : existingReservation.dateEnd,
-        status: data.status || existingReservation.status,
-        purpose: data.purpose || existingReservation.purpose,
-        type: statusType.RECUSADO
-      }
+        status: statusType.RECUSADO,
+      },
     });
 
     return {
@@ -182,7 +189,7 @@ async function refuseReservation(id, data) {
 async function returnReservation(id, data) {
   try {
     const existingReservation = await prisma.reservation.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!existingReservation) {
@@ -205,12 +212,8 @@ async function returnReservation(id, data) {
     const updatedReservation = await prisma.reservation.update({
       where: { id },
       data: {
-        dateStart: data.dateStart ? new Date(data.dateStart) : existingReservation.dateStart,
-        dateEnd: data.dateEnd ? new Date(data.dateEnd) : existingReservation.dateEnd,
-        status: data.status || existingReservation.status,
-        purpose: data.purpose || existingReservation.purpose,
-        type: statusType.FINALIZADO
-      }
+        status: statusType.FINALIZADO,
+      },
     });
 
     return {
@@ -231,7 +234,7 @@ async function returnReservation(id, data) {
 async function cancelReservation(id, data) {
   try {
     const existingReservation = await prisma.reservation.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!existingReservation) {
@@ -254,12 +257,8 @@ async function cancelReservation(id, data) {
     const updatedReservation = await prisma.reservation.update({
       where: { id },
       data: {
-        dateStart: data.dateStart ? new Date(data.dateStart) : existingReservation.dateStart,
-        dateEnd: data.dateEnd ? new Date(data.dateEnd) : existingReservation.dateEnd,
-        status: data.status || existingReservation.status,
-        purpose: data.purpose || existingReservation.purpose,
-        type: statusType.CANCELADO
-      }
+        status: statusType.CANCELADO,
+      },
     });
 
     return {
@@ -277,10 +276,41 @@ async function cancelReservation(id, data) {
   }
 }
 
+async function getReservationStatus(userId) {
+  try {
+    const reservation = await prisma.reservation.findFirst({
+      where: { userId },
+      select: { status: true },
+    });
+
+    if (!reservation) {
+      return {
+        type: "error",
+        message: "Nenhuma reserva encontrada para este usuário.",
+      };
+    }
+
+    return {
+      type: "success",
+      message: "Status da reserva encontrado.",
+      status: reservation.status,
+    };
+  } catch (error) {
+    console.error("Erro ao buscar status da reserva:", error);
+    return {
+      type: "error",
+      message: "Erro ao buscar status da reserva.",
+      error: error.message,
+    };
+  }
+}
+
+module.exports = { getReservationStatus };
+
 async function deleteReservation(id) {
   try {
     const reservation = await prisma.reservation.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!reservation) {
@@ -289,13 +319,13 @@ async function deleteReservation(id) {
 
     if (reservation.materialId) {
       const material = await prisma.material.findUnique({
-        where: { id: reservation.materialId }
+        where: { id: reservation.materialId },
       });
 
       if (material) {
         await prisma.material.update({
           where: { id: material.id },
-          data: { quantity: material.quantity + 1 }
+          data: { quantity: material.quantity + 1 },
         });
       }
     }
@@ -321,4 +351,5 @@ module.exports = {
   returnReservation,
   cancelReservation,
   deleteReservation,
+  getReservationStatus,
 };

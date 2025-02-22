@@ -8,6 +8,7 @@ const {
   refuseReservation,
   returnReservation,
   cancelReservation,
+  getReservationStatus,
 } = require("../../controllers/reservationController");
 const authenticateJWT = require("../../auth/middlewares/authenticateJWT");
 
@@ -65,6 +66,38 @@ router.get("/:id", authenticateJWT, async (req, res) => {
     return res.status(result.type === "success" ? 200 : 400).send(result);
   } catch (error) {
     console.error("Erro ao listar reserva:", error);
+    return res.status(500).send({ error: "Erro interno do servidor" });
+  }
+});
+
+
+/**
+ * @swagger
+ * /api/v1/admin/reservations/status/{userId}:
+ *   get:
+ *     summary: Lista o status de uma reserva pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Reserva retornada com sucesso
+ *       400:
+ *         description: Reserva não encontrada
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.get("/status/:userId", authenticateJWT, async (req, res) => {
+  try {
+    const result = await getReservationStatus(Number(req.params.userId));
+    return res.status(result.type === "success" ? 200 : 400).send(result);
+  } catch (error) {
+    console.error("Erro ao listar status de reserva:", error);
     return res.status(500).send({ error: "Erro interno do servidor" });
   }
 });
