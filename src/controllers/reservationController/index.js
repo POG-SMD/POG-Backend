@@ -80,12 +80,18 @@ const createReservation = async (data) => {
     });
 
     if (materials.length !== data.materialIds.length) {
-      return { type: "error", message: "Um ou mais materiais não foram encontrados." };
+      return {
+        type: "error",
+        message: "Um ou mais materiais não foram encontrados.",
+      };
     }
 
     for (const material of materials) {
       if (material.quantity <= 0) {
-        return { type: "error", message: `Material ${material.title} esgotado.` };
+        return {
+          type: "error",
+          message: `Material ${material.title} esgotado.`,
+        };
       }
     }
 
@@ -134,7 +140,10 @@ async function cancelReservation(id) {
     });
 
     if (!reservation) {
-      return { type: "error", message: "Reserva não encontrada para cancelar." };
+      return {
+        type: "error",
+        message: "Reserva não encontrada para cancelar.",
+      };
     }
 
     for (const resMaterial of reservation.materials) {
@@ -193,8 +202,10 @@ async function getReservationStatus(userId) {
   try {
     const reservation = await prisma.reservation.findFirst({
       where: { userId },
-      select: { status: true },
+      orderBy: { id: "desc" }, 
+      select: { status: true, id: true },
     });
+    
 
     if (!reservation) {
       return {
@@ -206,7 +217,7 @@ async function getReservationStatus(userId) {
     return {
       type: "success",
       message: "Status da reserva encontrado.",
-      status: reservation.status,
+      data: { status: reservation.status, reservationId: reservation.id },
     };
   } catch (error) {
     console.error("Erro ao buscar status da reserva:", error);
@@ -225,7 +236,10 @@ async function acceptReservation(id) {
     });
 
     if (!existingReservation) {
-      return { type: "error", message: "Reserva não encontrada para aceitação." };
+      return {
+        type: "error",
+        message: "Reserva não encontrada para aceitação.",
+      };
     }
 
     const updatedReservation = await prisma.reservation.update({
