@@ -9,11 +9,11 @@ const statusType = {
 
 const getStatusLabel = (status) => {
   const texts = {
-    [currencyType.PENDENTE]: 'PENDENTE',
-    [currencyType.EM_RESERVA]: 'EM RESERVA',
-    [currencyType.RECUSADO]: 'RECUSADO',
-    [currencyType.FINALIZADO]: 'FINALIZADO',
-    [currencyType.CANCELADO]: 'CANCELADO',
+    [statusType.PENDENTE]: 'PENDENTE',
+    [statusType.EM_RESERVA]: 'EM RESERVA',
+    [statusType.RECUSADO]: 'RECUSADO',
+    [statusType.FINALIZADO]: 'FINALIZADO',
+    [statusType.CANCELADO]: 'CANCELADO',
   }
 
   return texts[status]
