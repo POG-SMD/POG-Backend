@@ -220,7 +220,7 @@ router.post('/login', async (req, res) => {
         const result = await loginUser(email, password);
 
         if (result.type === 'success') {
-            return res.status(200).json({ message: result.message, token: result.token });
+            return res.status(200).json({ message: result.message, token: result.token, data: result.data });
         } else {
             return res.status(400).json({ message: result.message });
         }

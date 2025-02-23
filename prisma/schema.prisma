@@ -25,8 +25,8 @@ model Reservation {
   updatedAt   DateTime  @updatedAt @db.Timestamp(6)
   userId      Int
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dateStart   DateTime  
-  dateEnd     DateTime  
+  dateStart   String  
+  dateEnd     String  
   startTime   String
   endTime     String
   status      Int?  @default(1)

@@ -92,13 +92,13 @@ const createReservation = async (data) => {
     const newReservation = await prisma.reservation.create({
       data: {
         userId: data.userId,
+        type: data.type,
+        status: statusType.PENDENTE,
         dateStart: data.dateStart,
         dateEnd: data.dateEnd,
         startTime: data.startTime,
         endTime: data.endTime,
         purpose: data.purpose,
-        type: data.type,
-        status: statusType.PENDENTE,
         materials: {
           create: data.materialIds.map((materialId) => ({
             material: { connect: { id: materialId } },
